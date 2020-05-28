@@ -21,8 +21,6 @@ public class BaiThiManager {
             String lop = sinhVienServer.getLop();
 
 
-
-
         }
         return null;
     }

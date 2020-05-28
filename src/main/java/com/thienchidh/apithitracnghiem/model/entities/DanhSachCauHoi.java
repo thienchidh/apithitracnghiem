@@ -5,23 +5,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Entity(name = "SinhVienBaiThi")
-public class SinhVienBaiThi {
+@Entity(name = "DanhSachCauHoi")
+public class DanhSachCauHoi {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @JoinColumn
-    @OneToOne
-    private SinhVien sinhVien;
-
-    @JoinColumn
-    @OneToOne
-    private BaiThi baiThi;
-
-
+    @JoinColumn(name = "cauhois")
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<CauHoi> cauHois;
 }

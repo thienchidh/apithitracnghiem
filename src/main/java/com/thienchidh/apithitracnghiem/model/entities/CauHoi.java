@@ -37,11 +37,11 @@ public class CauHoi {
     @Column(name = "dapAnF")
     private String dapAnF;
 
-    @Column(name = "dapAnDung")
-    private String dapAnDung;// a|b|c|d
-
     @Column(name = "rate")
     private int rate;
+
+    @Column(name = "dapAnDung")
+    private String dapAnDung;// a|b|c|d
 
     @Column(name = "thuoc_chuong")
     private String thuocChuong;

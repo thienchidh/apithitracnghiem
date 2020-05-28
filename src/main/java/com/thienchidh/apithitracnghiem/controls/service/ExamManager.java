@@ -17,11 +17,11 @@ public class ExamManager {
     public boolean createExam(Exam examClient) {
         String tenBaiThi = examClient.getTenBaiThi();
         String thoiGianBatDau = examClient.getThoiGianBatDau();
-        int baoLau = examClient.getBaoLau();
+        long baoLau = examClient.getBaoLau();
 
 
-
-
+        // TODO: 27/05/2020
+        throw new RuntimeException("Not implemented!");
     }
 
 

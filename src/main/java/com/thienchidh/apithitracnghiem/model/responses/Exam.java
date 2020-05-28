@@ -14,7 +14,7 @@ public class Exam {
 
     private String maLoaiKt;
     private String thoiGianBatDau;
-    private int baoLau;
+    private long baoLau;
     private String thoiGianKetThuc;
     private String lop;
     @Builder.Default
