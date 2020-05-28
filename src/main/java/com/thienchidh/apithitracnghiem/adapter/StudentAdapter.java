@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class StudentAdapter {
     @NotNull
-    public Student convert(SinhVien sinhVien) {
+    public Student convert(@NotNull SinhVien sinhVien) {
         return Student.builder()
                 .maso(sinhVien.getMaSo())
                 .name(sinhVien.getHoTen())

@@ -126,18 +126,25 @@ public class Api01Controller {
         return ResponseEntity.ok().build();
     }
 
+    @NotNull
     private ResponseEntity<?> getInfoDethiOfMSSVBaithi(@NotNull String mssv, int startId) {
         return null;
     }
 
+    @NotNull
     private ResponseEntity<?> getInfoDethiOfLopBaithi(@NotNull String lop, @NotNull String bai_thi, int startId) {
         return null;
     }
 
+    @NotNull
     private ResponseEntity<?> getDethi(@NotNull String mssv, @NotNull String bai_thi) {
-        return null;
+
+        ExamQuestions body = new ExamQuestions();
+
+        return ResponseEntity.ok(body);
     }
 
+    @NotNull
     private ResponseEntity<ExamQuestions> getDiem_Baithi(@NotNull String mssv, @NotNull String bai_thi) {
         return null;
         // TODO: 27/05/2020

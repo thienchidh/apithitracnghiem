@@ -95,4 +95,9 @@ public class QuestionManager {
         return new ListQuestions(list.size(), list);
     }
 
+
+    public Favorite addFavorite(SinhVien sinhVienServer, CauHoi cauHoiServer) {
+        return favoriteRepo.save(new Favorite(0, sinhVienServer, cauHoiServer));
+    }
+
 }
