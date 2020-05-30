@@ -23,5 +23,5 @@ public class DapAn {
     private CauHoi cauHoi;
 
     @Column(name = "dapAn")
-    private String dapAn;
+    private String dapAn;// a | b | c | d
 }

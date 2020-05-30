@@ -17,6 +17,8 @@ import java.util.Random;
 @AllArgsConstructor
 public class DeThiManager {
 
+    public static final int LIMIT_NUM_QUESTIONS = 40;
+
     private DeThiRepo deThiRepo;
     private DanhSachCauHoiRepo danhSachCauHoiRepo;
     private CauHoiRepo cauHoiRepo;
@@ -38,7 +40,7 @@ public class DeThiManager {
     @NotNull
     public DanhSachCauHoi generateDanhSachCauHoi() {
         DanhSachCauHoi cauHoi = new DanhSachCauHoi();
-        cauHoi.setCauHois(generateCauHoi(60));
+        cauHoi.setCauHois(generateCauHoi(LIMIT_NUM_QUESTIONS));
 
         return danhSachCauHoiRepo.save(cauHoi);
     }
@@ -73,8 +75,22 @@ public class DeThiManager {
     }
 
 
-    public void getDeThi() {
+    public DeThi getDeThi(SinhVien sinhVienServer, BaiThi baiThiServer) {
 
+        List<DeThi> allBySinhVien = deThiRepo.findAllBySinhVien(sinhVienServer);
+        for (DeThi deThi : allBySinhVien) {
+            if (deThi.getBaiThi().getMaBaiThi().equals(baiThiServer.getMaBaiThi()) && deThi.getSinhVien().getMaSo().equals(sinhVienServer.getMaSo())) {
+                return deThi;
+            }
+        }
+
+        List<DeThi> allByBaiThi = deThiRepo.findAllByBaiThi(baiThiServer);
+        for (DeThi deThi : allByBaiThi) {
+            if (deThi.getBaiThi().getMaBaiThi().equals(baiThiServer.getMaBaiThi()) && deThi.getSinhVien().getMaSo().equals(sinhVienServer.getMaSo())) {
+                return deThi;
+            }
+        }
+        return null;
     }
 
 }

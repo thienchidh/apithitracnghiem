@@ -3,14 +3,12 @@ package com.thienchidh.apithitracnghiem.controls.rest;
 import com.thienchidh.apithitracnghiem.adapter.ExamAdapter;
 import com.thienchidh.apithitracnghiem.adapter.StudentAdapter;
 import com.thienchidh.apithitracnghiem.controls.repo.*;
-import com.thienchidh.apithitracnghiem.controls.service.AccountManager;
-import com.thienchidh.apithitracnghiem.controls.service.ClassManager;
-import com.thienchidh.apithitracnghiem.controls.service.QuestionManager;
-import com.thienchidh.apithitracnghiem.model.entities.Account;
-import com.thienchidh.apithitracnghiem.model.entities.GiangVien;
-import com.thienchidh.apithitracnghiem.model.entities.SinhVien;
-import com.thienchidh.apithitracnghiem.model.entities.User;
-import com.thienchidh.apithitracnghiem.model.responses.*;
+import com.thienchidh.apithitracnghiem.controls.service.*;
+import com.thienchidh.apithitracnghiem.model.entities.*;
+import com.thienchidh.apithitracnghiem.model.responses.ExamQuestions;
+import com.thienchidh.apithitracnghiem.model.responses.ListQuestions;
+import com.thienchidh.apithitracnghiem.model.responses.ListStudents;
+import com.thienchidh.apithitracnghiem.model.responses.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
@@ -18,15 +16,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/apiThitracnghiem/api01/General")
 public class Api01Controller {
     private AccountManager accountManager;
+    private BaiThiManager baiThiManager;
     private ClassManager classManager;
     private QuestionManager questionManager;
+    private DeThiManager deThiManager;
 
     private AccountRepo accountRepo;
     private BaiLamRepo baiLamRepo;
@@ -41,6 +41,8 @@ public class Api01Controller {
     private UserRepo userRepo;
     private ExamAdapter examAdapter;
     private StudentAdapter studentAdapter;
+
+    private ListInfoOfLop listInfoOfLop;
 
     @PostMapping("/getAuthen")
     public ResponseEntity<UserResponse> login(@RequestBody @NotNull Account clientAccount) {
@@ -145,64 +147,39 @@ public class Api01Controller {
     }
 
     @NotNull
-    private ResponseEntity<ExamQuestions> getDiem_Baithi(@NotNull String mssv, @NotNull String bai_thi) {
-        return null;
-        // TODO: 27/05/2020
-//        return sinhVienRepo.findByMaSo(mssv).map(sinhVien -> ResponseEntity.ok(questionManager.getListQuestionNormal(sinhVien, startId))).orElseGet(() -> ResponseEntity.notFound().build());
+    private ResponseEntity<ExamQuestions> getDiem_Baithi(@NotNull String mssv, @NotNull String maBaiThi) {
+        Optional<SinhVien> byMaSo = sinhVienRepo.findByMaSo(mssv);
+        if (byMaSo.isPresent()) {
+            Optional<BaiThi> byMaBaiThi = baiThiRepo.findByMaBaiThi(maBaiThi);
+            if (byMaBaiThi.isPresent()) {
+                if (byMaBaiThi.get().getStatus() != BaiThi.Status.DISABLED) {
+                    DeThi deThi = deThiManager.getDeThi(byMaSo.get(), byMaBaiThi.get());
+                    if (deThi != null) {
+                        return ResponseEntity.ok(baiThiManager.getDiemBaiThi(deThi));
+                    }
+                }
+            }
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @NotNull
     private ResponseEntity<ListStudents> getListInfoOfLop(@NotNull String lop, @NotNull String mssv) {// ok
-        return ResponseEntity.ok(new ListInfoOfLop().getListInfoOfLop(lop, mssv));
+        return ResponseEntity.ok(listInfoOfLop.getListInfoOfLop(lop, mssv));
     }
 
     @NotNull
     private ResponseEntity<?> getListInfoOfLop(@NotNull String lop) {// ok
-        return ResponseEntity.ok(new ListInfoOfLop().getListInfoOfLop(lop));
+        return ResponseEntity.ok(listInfoOfLop.getListInfoOfLop(lop));
     }
 
     @NotNull
     private ResponseEntity<ListQuestions> getFavourite(@NotNull String mssv, int startId) {// ok
-        return sinhVienRepo.findByMaSo(mssv).map(sinhVien -> ResponseEntity.ok(questionManager.getListQuestionNormal(sinhVien, startId))).orElseGet(() -> ResponseEntity.notFound().build());
+        return sinhVienRepo.findByMaSo(mssv).map(sinhVien -> ResponseEntity.ok(questionManager.getFavorite(sinhVien, startId))).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @NotNull
     private ResponseEntity<?> getDSLop() {// ok
         return ResponseEntity.ok(classManager.getListClass());
-    }
-
-    class ListInfoOfLop {
-
-
-        public ListStudents getListInfoOfLop(@NotNull String lop) {
-            ListStudents students = new ListStudents();
-            students.setLop(lop);
-
-            var sinhVienRepoAllByLop = sinhVienRepo.findAllByLop(lop);
-            List<Student> convert = studentAdapter.convert(sinhVienRepoAllByLop);
-            students.setListInfoSinhvien(convert);
-
-            var baiThiRepoAllByLop = baiThiRepo.findAllByLop(lop);
-            List<Exam> examsConvert = examAdapter.convert(baiThiRepoAllByLop);
-            students.setListInfoBaithi(examsConvert);
-
-            return students;
-        }
-
-        public ListStudents getListInfoOfLop(@NotNull String lop, @NotNull String mssv) {
-
-            ListStudents students = new ListStudents();
-            students.setLop(lop);
-
-            var sinhVienRepoAllByLop = sinhVienRepo.findAllByMaSo(mssv);
-            List<Student> convert = studentAdapter.convert(sinhVienRepoAllByLop);
-            students.setListInfoSinhvien(convert);
-
-            var baiThiRepoAllByLop = baiThiRepo.findAllByLop(lop);
-            List<Exam> examsConvert = examAdapter.convert(baiThiRepoAllByLop);
-            students.setListInfoBaithi(examsConvert);
-
-            return students;
-        }
     }
 }

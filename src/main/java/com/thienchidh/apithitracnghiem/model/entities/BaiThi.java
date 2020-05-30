@@ -51,5 +51,6 @@ public class BaiThi {
         NOT_STARTED,
         PENDING,
         FINISHED,
+        DISABLED
     }
 }
